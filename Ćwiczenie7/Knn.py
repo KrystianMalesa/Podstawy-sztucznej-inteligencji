@@ -91,12 +91,20 @@ def main():
         #y: Klucz odpowiedzi (gatunki).
         X, y = pobierz_dane_offline(nazwa_zbioru)
 
-        X_train, X_test, y_train, y_test = train_test_split(
+        wyniki_podzialu = train_test_split(
             X, y, 
             test_size=WIELKOSC_ZBIORU_TESTOWEGO, 
             random_state=ZIARNO_LOSOWOSCI, 
             stratify=y
         )
+        # Duża część pytań (do nauki)
+        X_train = wyniki_podzialu[0]
+        #Mała część pytań (na egzamin)
+        X_test  = wyniki_podzialu[1]
+        #Duża część odpowiedzi (do nauki)
+        y_train = wyniki_podzialu[2]
+        #Mała część odpowiedzi (na egzamin)
+        y_test  = wyniki_podzialu[3]
 
         if NORMALIZACJA_DANYCH:
             scaler = MinMaxScaler()
@@ -127,4 +135,5 @@ def main():
         generuj_pdf(df_results, "Raport_kNN.pdf")
 
 if __name__ == "__main__":
+
     main()
