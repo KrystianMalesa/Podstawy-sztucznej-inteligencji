@@ -97,14 +97,10 @@ def main():
             random_state=ZIARNO_LOSOWOSCI, 
             stratify=y
         )
-        # Duża część pytań (do nauki)
-        X_train = wyniki_podzialu[0]
-        #Mała część pytań (na egzamin)
-        X_test  = wyniki_podzialu[1]
-        #Duża część odpowiedzi (do nauki)
-        y_train = wyniki_podzialu[2]
-        #Mała część odpowiedzi (na egzamin)
-        y_test  = wyniki_podzialu[3]
+        X_train = wyniki_podzialu[0]  #Pytania w podręczniku
+        X_test  = wyniki_podzialu[1]  #Pytania na teście
+        y_train = wyniki_podzialu[2]  #Odpowiedzi w podręczniku
+        y_test  = wyniki_podzialu[3]  #Odpowiedzi nauczyciela - ukryte
 
         if NORMALIZACJA_DANYCH:
             scaler = MinMaxScaler()
@@ -137,3 +133,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
