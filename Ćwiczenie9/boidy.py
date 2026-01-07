@@ -3,32 +3,35 @@ import random
 import math
 
 WIDTH, HEIGHT = 1200, 900
-N_BOIDS = 200
+N_BOIDS = 100
 FPS = 60
 
 VISION_RADIUS = 100
 VISION_ANGLE = math.radians(120)
-SEPARATION_DIST = 25
+SEPARATION_DIST = 40
 K_NEIGHBORS = 6
 
 MAX_SPEED = 4
-MAX_FORCE = 0.05
+MAX_FORCE = 0.15
 
-COHESION_W = 0.005
-ALIGNMENT_W = 0.05
-SEPARATION_W = 0.15
+COHESION_W = 0.05
+ALIGNMENT_W = 0.2
+SEPARATION_W = 0.5
 
 boids = []
 
-for _ in range(N_BOIDS):
+for b in range(N_BOIDS):
     pos = pygame.Vector2(
         random.uniform(0, WIDTH),
         random.uniform(0, HEIGHT)
     )
     angle = random.uniform(0, 2 * math.pi)
-    vel = pygame.Vector2(math.cos(angle), math.sin(angle)) # cos za oś X, sin za oś Y
+    vel = pygame.Vector2(math.cos(angle), math.sin(angle))
     vel.scale_to_length(random.uniform(1, MAX_SPEED))
-    boids.append({"pos": pos, "vel": vel})
+    
+    color = pygame.Color(0)
+    color.hsla = (random.randint(0, 360), 100, 50, 100)
+    boids.append({"pos": pos, "vel": vel, "color": color})
 
 
 def get_neighbors(i):
@@ -49,7 +52,7 @@ def get_neighbors(i):
 
 def cohesion(i):
     somsiad = get_neighbors(i)
-    if not somsiad:
+    if not somsiad: 
         return pygame.Vector2(0, 0)
 
     center = sum((b["pos"] for b, _ in somsiad), pygame.Vector2(0, 0)) / len(somsiad)
@@ -68,8 +71,9 @@ def separation(i):
     for boid, distance in get_neighbors(i):
         if distance < SEPARATION_DIST:
             wektor_do_sasiada = boid["pos"] - boids[i]["pos"]
-            kierunek_do_sasiada = wektor_do_sasiada.normalize()
-            force = force - kierunek_do_sasiada
+            if wektor_do_sasiada.length() > 0:
+                kierunek_do_sasiada = wektor_do_sasiada.normalize()
+                force = force - kierunek_do_sasiada
     return force
 
 def wrap(pos):
@@ -79,10 +83,9 @@ def wrap(pos):
     if pos.y > HEIGHT: pos.y = 0
 
 
-
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Boids")
+pygame.display.set_caption("Boids - Rainbow Edition")
 clock = pygame.time.Clock()
 
 running = True
@@ -117,7 +120,7 @@ while running:
         p2 = boid["pos"] + pygame.Vector2(-8, 5).rotate_rad(angle)
         p3 = boid["pos"] + pygame.Vector2(-8, -5).rotate_rad(angle)
 
-        pygame.draw.polygon(screen, (255, 255, 255), [p1, p2, p3])
+        pygame.draw.polygon(screen, boid["color"], [p1, p2, p3])
 
     pygame.display.flip()
 
