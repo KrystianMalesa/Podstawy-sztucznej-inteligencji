@@ -26,7 +26,7 @@ for _ in range(N_BOIDS):
         random.uniform(0, HEIGHT)
     )
     angle = random.uniform(0, 2 * math.pi)
-    vel = pygame.Vector2(math.cos(angle), math.sin(angle))
+    vel = pygame.Vector2(math.cos(angle), math.sin(angle)) # cos za oś X, sin za oś Y
     vel.scale_to_length(random.uniform(1, MAX_SPEED))
     boids.append({"pos": pos, "vel": vel})
 
@@ -39,12 +39,11 @@ def get_neighbors(i):
         if i == j:
             continue
 
-        d = boid["pos"].distance_to(other["pos"])
-        if d < VISION_RADIUS:
+        distance = boid["pos"].distance_to(other["pos"])
+        if distance < VISION_RADIUS:
             direction = (other["pos"] - boid["pos"]).normalize()
             if boid["vel"].normalize().dot(direction) > math.cos(VISION_ANGLE / 2):
-                neighbors.append((other, d))
-
+                neighbors.append((other, distance))
     neighbors.sort(key=lambda x: x[1]) # Sort by distance
     return neighbors[:K_NEIGHBORS]
 
@@ -69,7 +68,7 @@ def separation(i):
     for boid, distance in get_neighbors(i):
         if distance < SEPARATION_DIST:
             wektor_do_sasiada = boid["pos"] - boids[i]["pos"]
-            kierunek_do_sasiada = wektor_do_sasiada / distance
+            kierunek_do_sasiada = wektor_do_sasiada.normalize()
             force = force - kierunek_do_sasiada
     return force
 
